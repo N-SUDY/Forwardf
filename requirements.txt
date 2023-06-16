@@ -1,2 +1,5 @@
-pyrogram==2.0.80
+pyrogram>=2.0.88
 tgcrypto
+pytz
+aiohttp
+datetime
