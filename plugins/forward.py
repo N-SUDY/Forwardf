@@ -80,7 +80,7 @@ async def send_for_forward(bot, message):
     else:
         skip = 0
 
-    caption = CAPTION.get(message.from_user.id)
+    caption = CAPTION.get_caption(message.from_user.id)
     if caption:
         caption = caption
     else:
@@ -147,9 +147,9 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
             fetched += 1
             if current % 20 == 0:
                 btn = [[
-                    InlineKeyboardButton('CANCEL', callback_data=f'forward#cancel#{chat}#{lst_msg_id}')
+                    InlineKeyboardButton('🚫 Cancel', callback_data=f'forward#cancel#{chat}#{lst_msg_id}')
                 ]]
-                await msg.edit_text(text=f"<b>Forward Processing...\n\nTotal Messages: <code>{lst_msg_id}</code>\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nForwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>", reply_markup=InlineKeyboardMarkup(btn))
+                await msg.edit_text(text=f"<b>Forward Processing...\n\nTotal Messages: <code>{lst_msg_id}</code>\n\nFetched :- {fetched}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nForwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>", reply_markup=InlineKeyboardMarkup(btn))
             if message.empty:
                 deleted += 1
                 continue
