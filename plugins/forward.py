@@ -69,8 +69,6 @@ async def send_for_forward(bot, message):
     target_chat_id = db.get_channel(message.from_user.id)
     if not target_chat_id:        
         return await message.reply("You not added target channel.\nAdd using /set_channel command.")
-     await db.set_caption(message.from_user.id, target_chat_id=None)
-     await message.reply_text("__**❌️ Target Channel Deleted**__")
     try:
         target_chat = await bot.get_chat(target_chat_id)
     except Exception as e:
