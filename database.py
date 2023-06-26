@@ -1,9 +1,19 @@
-import motor.motor_asyncio
+import pymongo
 from info import DB_NAME, DB_URL
+
+mongo = pymongo.MongoClient(DB_URL)
+db = mongo[DB_NAME]
+dbcol = db["user"]
 
 class Database:
 
-    async def set_caption(self, id, caption):
+def set_caption(chat_id, caption):
+       dbcol.update_one({"_id": chat_id},{"$set":{"caption": caption}})
+	
+def caption(chat_id): 
+        dbcol.update_one({"_id": chat_id},{"$set":{"caption":None}})
+    
+    async def (self, id, caption):
         await self.col.update_one({'_id': int(id)}, {'$set': {'caption': caption}})
 
     async def get_caption(self, id):
