@@ -66,10 +66,11 @@ async def send_for_forward(bot, message):
     if source_chat.type != enums.ChatType.CHANNEL:
         return await message.reply("I can forward only channels.")
 
-    target_chat_id = CHANNEL.get(message.from_user.id)
-    if not target_chat_id:
+    target_chat_id = db.get_channel(message.from_user.id)
+    if not target_chat_id:        
         return await message.reply("You not added target channel.\nAdd using /set_channel command.")
-
+     await db.set_caption(message.from_user.id, target_chat_id=None)
+     await message.reply_text("__**❌️ Target Channel Deleted**__")
     try:
         target_chat = await bot.get_chat(target_chat_id)
     except Exception as e:
@@ -126,7 +127,7 @@ async def set_target_channel(bot, message):
         return await message.reply("Make me a admin in your target channel.")
     if chat.type != enums.ChatType.CHANNEL:
         return await message.reply("I can set channels only.")
-    CHANNEL[message.from_user.id] = int(chat.id)
+    await db.set_channel(message.from_user.id, target_chat_id=target_chat_id)
     await message.reply(f"<b>Successfully set {chat.title} target channel.</b>")
 
 async def forward_files(lst_msg_id, chat, msg, bot, user_id):
