@@ -168,7 +168,7 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
                 continue
             try:
                 await bot.send_cached_media(
-                    chat_id=CHANNEL.get(user_id)  if CHANNEL.get(user_id) else TARGET_DB,
+                    chat_id=CHANNEL.get(user_id) if CHANNEL.get(user_id) else TARGET_DB,
                     file_id=media.file_id,
                     caption=CAPTION.get(user_id).format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption) if CAPTION.get(user_id) else FILE_CAPTION.format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption)
                 )
