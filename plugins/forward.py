@@ -4,7 +4,7 @@ import asyncio
 import re
 import logging
 from pyrogram import Client, filters, enums
-from database import db
+from database import *
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from info import FILE_CAPTION, TARGET_DB
@@ -66,7 +66,7 @@ async def send_for_forward(bot, message):
     if source_chat.type != enums.ChatType.CHANNEL:
         return await message.reply("I can forward only channels.")
 
-    target_chat_id = db.get_channel(message.from_user.id)
+    target_chat_id = get_channel(message.from_user.id)
     if not target_chat_id:        
         return await message.reply("You not added target channel.\nAdd using /set_channel command.")
     try:
@@ -125,7 +125,7 @@ async def set_target_channel(bot, message):
         return await message.reply("Make me a admin in your target channel.")
     if chat.type != enums.ChatType.CHANNEL:
         return await message.reply("I can set channels only.")
-    await db.set_channel(message.from_user.id, target_chat_id=target_chat_id)
+    await set_channel(message.from_user.id, target_chat_id=target_chat_id)
     await message.reply(f"<b>Successfully set {chat.title} target channel.</b>")
 
 async def forward_files(lst_msg_id, chat, msg, bot, user_id):
@@ -193,20 +193,20 @@ async def add_caption(client, message):
     if len(message.command) == 1:
        return await message.reply_text("**__Use this Command to Set the Custom Caption for Your Files. For Setting Your Caption Send Caption in the Format\n`/set_caption`__\n\nFile Caption Keys\n• `{filename}` :- Replaced by the Filename.\n• `{filesize}` :- Replaced by the Filesize.\n• `{duration}` :- Replaced by the Duration of Videos.\n\nExample :- `/set_caption <b>File Name :- {filename}\n\n💾 File Size :- {filesize}\n\n⏰ Duration :- {duration}</b>`\n\n⚠️ Note :- You Can Check the Current Caption using /see_caption**")
     caption = message.text.split(" ", 1)[1]
-    await db.set_caption(message.from_user.id, caption=caption)
+    await set_caption(message.from_user.id, caption=caption)
     await message.reply_text("__**✅ Caption Saved**__")
    
 @Client.on_message(filters.private & filters.command('del_caption'))
 async def delete_caption(client, message):
-    caption = await db.get_caption(message.from_user.id)  
+    caption = await get_caption(message.from_user.id)  
     if not caption:
        return await message.reply_text("__**😔 You Don't have Any Caption**__")
-    await db.set_caption(message.from_user.id, caption=None)
+    await set_caption(message.from_user.id, caption=None)
     await message.reply_text("__**❌️ Caption Deleted**__")
                                        
 @Client.on_message(filters.private & filters.command(['see_caption']))
 async def see_caption(client, message):
-    caption = await db.get_caption(message.from_user.id)  
+    caption = await get_caption(message.from_user.id)  
     if caption:
        await message.reply_text(f"**--You're Caption :---**\n\n{caption}")
     else:
