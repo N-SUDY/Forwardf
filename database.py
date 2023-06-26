@@ -1,7 +1,5 @@
 import motor.motor_asyncio
 from info import DB_NAME, DB_URL
-from database import Database
-db = Database(DB_URL, DB_NAME)
 
 class Database:
 
@@ -18,3 +16,5 @@ class Database:
     async def get_channel(self, server_id):
         user = await self.col.find_one({"serverid": server_id}, {"target_chat_id": 1})
         return user.get("target_chat_id", None)
+
+db = Database(DB_URL, DB_NAME)
