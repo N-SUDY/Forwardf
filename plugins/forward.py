@@ -6,7 +6,7 @@ import logging
 from pyrogram import Client, filters, enums
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from info import FILE_CAPTION
+from info import FILE_CAPTION, TARGET_DB
 logger = logging.getLogger(__name__)
 
 # Setup database yourself. If you need setup database contact @Hansaka_Anuhas for paid edits
@@ -136,9 +136,7 @@ async def set_caption(bot, message):
     except:
         return await message.reply("Give me a caption.")
     CAPTION[message.from_user.id] = caption
-    await message.reply(f"Successfully set file caption.\n\n{caption}")
-    
-    
+    await message.reply(f"<b>Successfully set file caption.</b>\n\n{caption}")  
     
 async def forward_files(lst_msg_id, chat, msg, bot, user_id):
     current = CURRENT.get(user_id) if CURRENT.get(user_id) else 0
@@ -153,7 +151,7 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
     try:
         async for message in bot.iter_messages(chat, lst_msg_id, CURRENT.get(user_id) if CURRENT.get(user_id) else 0):
             if CANCEL.get(user_id):
-                await msg.edit(f"Successfully Forward Canceled!")
+                await msg.edit(f"<b>Successfully Forward Canceled!</b>")
                 break
             current += 1
             fetched += 1
@@ -161,7 +159,7 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
                 btn = [[
                     InlineKeyboardButton('CANCEL', callback_data=f'forward#cancel#{chat}#{lst_msg_id}')
                 ]]
-                await msg.edit_text(text=f"Forward Processing...\n\nTotal Messages: <code>{lst_msg_id}</code>\nCompleted Messages: <code>{current} / {lst_msg_id}</code>\nForwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code>", reply_markup=InlineKeyboardMarkup(btn))
+                await msg.edit_text(text=f"<b>Forward Processing...\n\nTotal Messages: <code>{lst_msg_id}</code>\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nForwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>", reply_markup=InlineKeyboardMarkup(btn))
             if message.empty:
                 deleted += 1
                 continue
@@ -180,14 +178,14 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
                 continue
             try:
                 await bot.send_cached_media(
-                    chat_id=CHANNEL.get(user_id),
+                    chat_id=CHANNEL.get(user_id)  if CHANNEL.get(user_id) else int(TARGET_DB),
                     file_id=media.file_id,
                     caption=CAPTION.get(user_id).format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption) if CAPTION.get(user_id) else FILE_CAPTION.format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption)
                 )
             except FloodWait as e:
                 await asyncio.sleep(e.value)  # Wait "value" seconds before continuing
                 await bot.send_cached_media(
-                    chat_id=CHANNEL.get(user_id),
+                    chat_id=CHANNEL.get(user_id) if CHANNEL.get(user_id) else int(TARGET_DB),
                     file_id=media.file_id,
                     caption=CAPTION.get(user_id).format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption) if CAPTION.get(user_id) else FILE_CAPTION.format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption)
                 )
@@ -195,9 +193,9 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
             await asyncio.sleep(1)
     except Exception as e:
         logger.exception(e)
-        await msg.reply(f"Forward Canceled!\n\nError - {e}")
+        await msg.reply(f"<b>Forward Canceled!\n\nError - {e}</b>")
     else:
-        await msg.edit(f'Forward Completed!\n\nTotal Messages: <code>{lst_msg_id}</code>\nCompleted Messages: <code>{current} / {lst_msg_id}</code>\nFetched Messages: <code>{fetched}</code>\nTotal Forwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code>')
+        await msg.edit(f'<b>Forward Completed!\n\nTotal Messages: <code>{lst_msg_id}</code>\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nFetched Messages: <code>{fetched}</code>\nTotal Forwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>')
         FORWARDING[user_id] = False
 
 
