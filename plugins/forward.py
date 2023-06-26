@@ -4,6 +4,7 @@ import asyncio
 import re
 import logging
 from pyrogram import Client, filters, enums
+from database import db
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from info import FILE_CAPTION, TARGET_DB
@@ -126,18 +127,8 @@ async def set_target_channel(bot, message):
     if chat.type != enums.ChatType.CHANNEL:
         return await message.reply("I can set channels only.")
     CHANNEL[message.from_user.id] = int(chat.id)
-    await message.reply(f"Successfully set {chat.title} target channel.")
+    await message.reply(f"<b>Successfully set {chat.title} target channel.</b>")
 
-
-@Client.on_message(filters.private & filters.command(['set_caption']))
-async def set_caption(bot, message):
-    try:
-        caption = message.text.split(" ", 1)[1]
-    except:
-        return await message.reply("Give me a caption.")
-    CAPTION[message.from_user.id] = caption
-    await message.reply(f"<b>Successfully set file caption.</b>\n\n{caption}")  
-    
 async def forward_files(lst_msg_id, chat, msg, bot, user_id):
     current = CURRENT.get(user_id) if CURRENT.get(user_id) else 0
     forwarded = 0
@@ -198,6 +189,29 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
         await msg.edit(f'<b>Forward Completed!\n\nTotal Messages: <code>{lst_msg_id}</code>\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nFetched Messages: <code>{fetched}</code>\nTotal Forwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>')
         FORWARDING[user_id] = False
 
+@Client.on_message(filters.private & filters.command('set_caption'))
+async def add_caption(client, message):
+    if len(message.command) == 1:
+       return await message.reply_text("**__Use this Command to Set the Custom Caption for Your Files. For Setting Your Caption Send Caption in the Format\n`/set_caption`__\n\nFile Caption Keys\n• `{filename}` :- Replaced by the Filename.\n• `{filesize}` :- Replaced by the Filesize.\n• `{duration}` :- Replaced by the Duration of Videos.\n\nExample :- `/set_caption <b>File Name :- {filename}\n\n💾 File Size :- {filesize}\n\n⏰ Duration :- {duration}</b>`\n\n⚠️ Note :- You Can Check the Current Caption using /see_caption**")
+    caption = message.text.split(" ", 1)[1]
+    await db.set_caption(message.from_user.id, caption=caption)
+    await message.reply_text("__**✅ Caption Saved**__")
+   
+@Client.on_message(filters.private & filters.command('del_caption'))
+async def delete_caption(client, message):
+    caption = await db.get_caption(message.from_user.id)  
+    if not caption:
+       return await message.reply_text("__**😔 You Don't have Any Caption**__")
+    await db.set_caption(message.from_user.id, caption=None)
+    await message.reply_text("__**❌️ Caption Deleted**__")
+                                       
+@Client.on_message(filters.private & filters.command(['see_caption']))
+async def see_caption(client, message):
+    caption = await db.get_caption(message.from_user.id)  
+    if caption:
+       await message.reply_text(f"**--You're Caption :---**\n\n{caption}")
+    else:
+       await message.reply_text("__**😔 You Don't have Any Caption**__")
 
 def get_size(size):
     units = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"]
