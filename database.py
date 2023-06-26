@@ -1,6 +1,8 @@
 import motor.motor_asyncio
 from info import DB_NAME, DB_URL
 
+db = Database(DB_URL, DB_NAME)
+
 class Database:
 
     async def set_caption(self, id, caption):
@@ -16,5 +18,3 @@ class Database:
     async def get_channel(self, server_id):
         user = await self.col.find_one({"serverid": server_id}, {"target_chat_id": 1})
         return user.get("target_chat_id", None)
-
-db = Database(DB_URL, DB_NAME)
