@@ -1,5 +1,5 @@
 pyrogram>=2.0.88
-motor==3.1.2
+pymongo==4.0.2
 tgcrypto
 pytz
 aiohttp
