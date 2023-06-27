@@ -79,7 +79,7 @@ async def send_for_forward(bot, message):
     else:
         skip = 0
 
-    caption = CAPTION.get_caption(message.from_user.id)
+    caption = CAPTION.get(message.from_user.id)
     if caption:
         caption = caption
     else:
