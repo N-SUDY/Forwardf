@@ -15,8 +15,7 @@ def set_channel(server_id, target_chat_id):
         dbcol.update_one({"serverid": server_id}, {"$set": {"target_chat_id": target_chat_id}})
 
 def get_channel(server_id, target_chat_id):
-        dbcol.find_one({"serverid": server_id}, {"target_chat_id": 1})
-        return user.get("target_chat_id", None)
+        dbcol.find_one({"serverid": server_id}, {"$set": {"target_chat_id": None}})
 
 def find_one(id):
 	return dbcol.find_one({"_id":id})
