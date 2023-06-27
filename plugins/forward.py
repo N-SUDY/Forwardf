@@ -126,7 +126,7 @@ async def set_target_channel(bot, message):
     if chat.type != enums.ChatType.CHANNEL:
         return await message.reply("I can set channels only.")
     await set_channel(message.from_user.id, target_chat_id=target_chat_id)
-    await message.reply(f"<b>Successfully set {chat.title} target channel.</b>")
+    await message.reply(f"<b>Successfully Set {chat.title} Target 🎯 Channel.</b>")
 
 async def forward_files(lst_msg_id, chat, msg, bot, user_id):
     current = CURRENT.get(user_id) if CURRENT.get(user_id) else 0
@@ -141,7 +141,7 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
     try:
         async for message in bot.iter_messages(chat, lst_msg_id, CURRENT.get(user_id) if CURRENT.get(user_id) else 0):
             if CANCEL.get(user_id):
-                await msg.edit(f"<b>Successfully Forward Canceled!</b>")
+                await msg.edit(f"<b>Successfully Forward Canceled!\nFetched :- {fetched}</b>")
                 break
             current += 1
             fetched += 1
@@ -149,7 +149,7 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
                 btn = [[
                     InlineKeyboardButton('🚫 Cancel', callback_data=f'forward#cancel#{chat}#{lst_msg_id}')
                 ]]
-                await msg.edit_text(text=f"<b>Forward Processing...\n\nTotal Messages: <code>{lst_msg_id}</code>\n\nFetched :- {fetched}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nForwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>", reply_markup=InlineKeyboardMarkup(btn))
+                await msg.edit_text(text=f"<b>Forward Processing...\n\nTotal Messages: <code>{lst_msg_id}</code>\nFetched :- {fetched}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nForwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>", reply_markup=InlineKeyboardMarkup(btn))
             if message.empty:
                 deleted += 1
                 continue
@@ -185,7 +185,7 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
         logger.exception(e)
         await msg.reply(f"<b>Forward Canceled!\n\nError - {e}</b>")
     else:
-        await msg.edit(f'<b>Forward Completed!\n\nTotal Messages: <code>{lst_msg_id}</code>\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nFetched Messages: <code>{fetched}</code>\nTotal Forwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>')
+        await msg.edit(f'<b>Forward Completed!\n\nTotal Messages: <code>{lst_msg_id}</code>\nFetched :- {fetched}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nFetched Messages: <code>{fetched}</code>\nTotal Forwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>')
         FORWARDING[user_id] = False
 
 @Client.on_message(filters.private & filters.command('set_caption'))
