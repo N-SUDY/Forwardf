@@ -1,5 +1,4 @@
 pyrogram>=2.0.88
-pymongo[srv]==4.0.2
 tgcrypto
 pytz
 aiohttp
