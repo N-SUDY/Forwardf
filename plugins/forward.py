@@ -65,7 +65,7 @@ async def send_for_forward(bot, message):
     if source_chat.type != enums.ChatType.CHANNEL:
         return await message.reply("I can forward only channels.")
 
-    target_chat_id = get_channel(message.from_user.id)
+    target_chat_id = CHANNEL.get(message.from_user.id)
     if not target_chat_id:        
         return await message.reply("You not added target channel.\nAdd using /set_channel command.")
     try:
