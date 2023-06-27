@@ -14,7 +14,7 @@ def get_caption(chat_id):
 def set_channel(server_id, target_chat_id):
         dbcol.update_one({"serverid": server_id}, {"$set": {"target_chat_id": target_chat_id}})
 
-def get_channel(server_id):
+def get_channel(server_id, target_chat_id):
         user = await dbcol.find_one({"serverid": server_id}, {"target_chat_id": 1})
         return user.get("target_chat_id", None)
 
