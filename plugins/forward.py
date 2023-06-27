@@ -193,7 +193,7 @@ async def add_caption(client, message):
     if len(message.command) == 1:
        return await message.reply_text("**__Use this Command to Set the Custom Caption for Your Files. For Setting Your Caption Send Caption in the Format\n`/set_caption`__\n\nFile Caption Keys\n• `{filename}` :- Replaced by the Filename.\n• `{filesize}` :- Replaced by the Filesize.\n• `{duration}` :- Replaced by the Duration of Videos.\n\nExample :- `/set_caption <b>File Name :- {filename}\n\n💾 File Size :- {filesize}\n\n⏰ Duration :- {duration}</b>`\n\n⚠️ Note :- You Can Check the Current Caption using /see_caption**")
     caption = message.text.split(" ", 1)[1]
-    set_caption(message.from_user.id, caption=caption)
+    set_caption(int(message.from_user.id), caption=caption)
     await message.reply_text("__**✅ Caption Saved**__")
    
 @Client.on_message(filters.private & filters.command('del_caption'))
@@ -201,7 +201,7 @@ async def delete_caption(client, message):
     caption = get_caption(message.from_user.id)  
     if not caption:
        return await message.reply_text("__**😔 You Don't have Any Caption**__")
-    set_caption(message.from_user.id, caption=None)
+    set_caption(int(message.from_user.id), caption=None)
     await message.reply_text("__**❌️ Caption Deleted**__")
                                        
 @Client.on_message(filters.private & filters.command(['see_caption']))
