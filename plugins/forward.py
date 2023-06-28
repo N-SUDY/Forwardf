@@ -84,6 +84,13 @@ async def send_for_forward(bot, message):
         caption = caption
     else:
         caption = FILE_CAPTION
+
+    target_chat = CHANNEL.get(message.from_user.id)
+    if target_chat:
+        target_chat = target_chat
+    else:
+        target_chat = TARGET_DB
+        
     # last_msg_id is same to total messages
     buttons = [[
         InlineKeyboardButton('Yes', callback_data=f'forward#yes#{chat_id}#{last_msg_id}')
