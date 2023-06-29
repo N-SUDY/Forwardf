@@ -64,9 +64,10 @@ async def send_for_forward(bot, message):
 
     if source_chat.type != enums.ChatType.CHANNEL:
         return await message.reply("I can forward only channels.")
-        target_chat_id = int(TARGET_DB)
-    else:
-        return
+        
+    target_chat_id = CHANNEL.get(message.from_user.id) if CHANNEL.get(message.from_user.id) else TARGET_DB
+    if not target_chat_id:        
+        return await message.reply("<b>You not Added Target 🎯 Channel. But we can Forward Default Target 🎯 Channel.\nAdd using /set_channel Command.</b>")
     try:
         target_chat = await bot.get_chat(target_chat_id)
     except Exception as e:
