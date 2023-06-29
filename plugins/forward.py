@@ -84,7 +84,13 @@ async def send_for_forward(bot, message):
         caption = caption
     else:
         caption = FILE_CAPTION
-
+        
+    target_chat_id = CHANNEL.get(message.from_user.id)
+    if target_chat_id:
+        target_chat_id = target_chat_id
+    else:
+        target_chat_id = TARGET_DB
+        
     # last_msg_id is same to total messages
     buttons = [[
         InlineKeyboardButton('Yes', callback_data=f'forward#yes#{chat_id}#{last_msg_id}')
@@ -92,7 +98,6 @@ async def send_for_forward(bot, message):
         InlineKeyboardButton('Close', callback_data=f'forward#close#{chat_id}#{last_msg_id}')
     ]]
     await message.reply(f"<b>Source Channel: {source_chat.title}\nTarget Channel: {target_chat.title}\nSkip messages: <code>{skip}</code>\nTotal Messages: <code>{last_msg_id}</code>\nFile Caption: {caption}\n\nDo you want to Forward?</b>", reply_markup=InlineKeyboardMarkup(buttons))
-
 
 @Client.on_message(filters.private & filters.command(['set_skip']))
 async def set_skip_number(bot, message):
@@ -115,6 +120,26 @@ async def set_caption(bot, message):
         return await message.reply("Give me a caption.")
     CAPTION[message.from_user.id] = caption
     await message.reply(f"Successfully set File caption.\n\n{caption}")
+
+@Client.on_message(filters.private & filters.command(['set_channel']))
+async def set_target_channel(bot, message):
+    try:
+        _, chat_id = message.text.split(" ")
+    except:
+        return await message.reply("Give me a target channel ID")
+    try:
+        chat_id = int(chat_id)
+    except:
+        return await message.reply("Give me a valid ID")
+
+    try:
+        chat = await bot.get_chat(chat_id)
+    except:
+        return await message.reply("Make me a admin in your target channel.")
+    if chat.type != enums.ChatType.CHANNEL:
+        return await message.reply("I can set channels only.")
+    CHANNEL[message.from_user.id] = int(chat.id)
+    await message.reply(f"<b>Successfully Set {chat.title} Target 🎯 Channel.</b>")
 
 async def forward_files(lst_msg_id, chat, msg, bot, user_id):
     current = CURRENT.get(user_id) if CURRENT.get(user_id) else 0
