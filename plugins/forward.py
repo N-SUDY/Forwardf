@@ -1,4 +1,4 @@
-"""(c) @Hansaka_Anuhas"""
+"""(c) Star Bots Tamil"""
 
 import asyncio
 import re
@@ -65,14 +65,6 @@ async def send_for_forward(bot, message):
     if source_chat.type != enums.ChatType.CHANNEL:
         return await message.reply("I can forward only channels.")
 
-    target_chat_id = CHANNEL.get(message.from_user.id) else TARGET_DB
-    if not target_chat_id:        
-        return await message.reply("<b>You not Added Target 🎯 Channel. But we can Forward Default Target 🎯 Channel.\nAdd using /set_channel Command.</b>")
-    try:
-        target_chat = await bot.get_chat(target_chat_id)
-    except Exception as e:
-        return await message.reply(f'Error - {e}')
-
     skip = CURRENT.get(message.from_user.id)
     if skip:
         skip = skip
@@ -85,12 +77,6 @@ async def send_for_forward(bot, message):
     else:
         caption = FILE_CAPTION
 
-    target_chat_id = CHANNEL.get(message.from_user.id)
-    if target_chat_id:
-        target_chat_id = target_chat_id
-    else:
-        target_chat_id = TARGET_DB
-        
     # last_msg_id is same to total messages
     buttons = [[
         InlineKeyboardButton('Yes', callback_data=f'forward#yes#{chat_id}#{last_msg_id}')
@@ -112,26 +98,6 @@ async def set_skip_number(bot, message):
         return await message.reply("Only support in numbers.")
     CURRENT[message.from_user.id] = int(skip)
     await message.reply(f"Successfully set <code>{skip}</code> skip number.")
-
-@Client.on_message(filters.private & filters.command(['set_channel']))
-async def set_target_channel(bot, message):
-    try:
-        _, chat_id = message.text.split(" ")
-    except:
-        return await message.reply("Give me a target channel ID")
-    try:
-        chat_id = int(chat_id)
-    except:
-        return await message.reply("Give me a valid ID")
-
-    try:
-        chat = await bot.get_chat(chat_id)
-    except:
-        return await message.reply("Make me a admin in your target channel.")
-    if chat.type != enums.ChatType.CHANNEL:
-        return await message.reply("I can set channels only.")
-    CHANNEL[message.from_user.id] = int(chat.id)
-    await message.reply(f"<b>Successfully Set {chat.title} Target 🎯 Channel.</b>")
 
 @Client.on_message(filters.private & filters.command(['set_caption']))
 async def set_caption(bot, message):
@@ -182,14 +148,14 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
                 continue
             try:
                 await bot.send_cached_media(
-                    chat_id=CHANNEL.get(user_id) if CHANNEL.get(user_id) else TARGET_DB,
+                    chat_id=int(TARGET_DB),
                     file_id=media.file_id,
                     caption=CAPTION.get(user_id).format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption) if CAPTION.get(user_id) else FILE_CAPTION.format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption)
                 )
             except FloodWait as e:
                 await asyncio.sleep(e.value)  # Wait "value" seconds before continuing
                 await bot.send_cached_media(
-                    chat_id=CHANNEL.get(user_id) if CHANNEL.get(user_id) else TARGET_DB,
+                    chat_id=int(TARGET_DB),
                     file_id=media.file_id,
                     caption=CAPTION.get(user_id).format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption) if CAPTION.get(user_id) else FILE_CAPTION.format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption)
                 )
