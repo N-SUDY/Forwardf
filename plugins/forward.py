@@ -85,11 +85,11 @@ async def send_for_forward(bot, message):
     else:
         caption = FILE_CAPTION
 
-    target_chat = CHANNEL.get(message.from_user.id)
-    if target_chat:
-        target_chat = target_chat
+    target_chat_id = CHANNEL.get(message.from_user.id)
+    if target_chat_id:
+        target_chat_id = target_chat_id
     else:
-        target_chat = TARGET_DB
+        target_chat_id = TARGET_DB
         
     # last_msg_id is same to total messages
     buttons = [[
