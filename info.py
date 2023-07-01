@@ -6,3 +6,5 @@ BOT_TOKEN = environ.get('BOT_TOKEN', '6078234170:AAGX4CDjIN2owsTeYTFOzk47XACzFO1
 OWNER = int(environ.get('OWNER', '1391556668'))
 FILE_CAPTION = environ.get('FILE_CAPTION', '<b>{file_name}</b>')
 TARGET_DB = int(environ.get("TARGET_DB", '-1001849017994'))
+LOG_CHANNEL = int(environ.get("LOG_CHANNEL", '-1001821439025'))
+PORT = int(environ.get("PORT", "8080"))
