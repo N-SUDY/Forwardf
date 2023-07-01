@@ -1,5 +1,6 @@
 import logging
 import logging.config
+from script import scripts
 
 # Get logging configurations
 logging.config.fileConfig('logging.conf')
