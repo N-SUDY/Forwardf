@@ -147,6 +147,7 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
     deleted = 0
     unsupported = 0
     fetched = 0
+    left = 0
     CANCEL[user_id] = False
     async with lock:
     # lst_msg_id is same to total messages
@@ -156,13 +157,14 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
                if CANCEL.get(user_id):
                     await msg.edit(f"<b>Successfully Forward Canceled!\nFetched :- {fetched}</b>")
                     break
+                left = int(last_msg_id)-int(total)                   
                 current += 1
                 fetched += 1
                 if current % 20 == 0:
                     btn = [[
                         InlineKeyboardButton('🚫 Cancel', callback_data=f'forward#cancel#{chat}#{lst_msg_id}')
                     ]]
-                    await msg.edit_text(text=f"<b>Forward Processing...\n\nTotal Messages: <code>{lst_msg_id}</code>\nFetched :- {fetched}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nForwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>", reply_markup=InlineKeyboardMarkup(btn))
+                    await msg.edit_text(text=f"<b>Forward Processing...\n\nTotal Messages: <code>{lst_msg_id}</code>\nFetched :- {fetched}\nMessages Left :- {left}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nForwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>", reply_markup=InlineKeyboardMarkup(btn))
                 if message.empty:
                     deleted += 1
                     continue
