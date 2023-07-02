@@ -196,11 +196,11 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
                         )
                     forwarded += 1
                     await asyncio.sleep(1)
-            except Exception as e:
-                logger.exception(e)
-                await msg.reply(f"<b>Forward Canceled!\n\nError - {e}</b>")
-            else:
-                await msg.edit(f'<b>Forward Completed!\n\nTotal Messages: <code>{lst_msg_id}</code>\nFetched :- {fetched}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nFetched Messages: <code>{fetched}</code>\nTotal Forwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>')
+        except Exception as e:
+            logger.exception(e)
+            await msg.reply(f"<b>Forward Canceled!\n\nError - {e}</b>")
+        else:
+            await msg.edit(f'<b>Forward Completed!\n\nTotal Messages: <code>{lst_msg_id}</code>\nFetched :- {fetched}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nFetched Messages: <code>{fetched}</code>\nTotal Forwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>')
 
 def get_size(size):
     units = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"]
