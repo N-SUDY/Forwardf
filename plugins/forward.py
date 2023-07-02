@@ -8,19 +8,19 @@ from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from info import FILE_CAPTION, TARGET_DB
 logger = logging.getLogger(__name__)
+lock = asyncio.Lock()
 
 # Setup database yourself. If you need setup database contact @Hansaka_Anuhas for paid edits
 CURRENT = {}
 CHANNEL = {}
 CANCEL = {}
-FORWARDING = {}
 CAPTION = {}
 
 @Client.on_callback_query(filters.regex(r'^forward'))
 async def forward(bot, query):
     _, ident, chat, lst_msg_id = query.data.split("#")
     if ident == 'yes':
-        if FORWARDING.get(query.from_user.id):
+        if lock.locked():
             return await query.answer('Wait until previous process complete.', show_alert=True)
 
         msg = query.message
@@ -148,14 +148,14 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
     unsupported = 0
     fetched = 0
     CANCEL[user_id] = False
-    FORWARDING[user_id] = True
+    async with lock:
     # lst_msg_id is same to total messages
 
-    try:
-        async for message in bot.iter_messages(chat, lst_msg_id, CURRENT.get(user_id) if CURRENT.get(user_id) else 0):
-            if CANCEL.get(user_id):
-                await msg.edit(f"<b>Successfully Forward Canceled!\nFetched :- {fetched}</b>")
-                break
+        try:
+           async for message in bot.iter_messages(chat, lst_msg_id, CURRENT.get(user_id) if CURRENT.get(user_id) else 0):
+               if CANCEL.get(user_id):
+                    await msg.edit(f"<b>Successfully Forward Canceled!\nFetched :- {fetched}</b>")
+                    break
             current += 1
             fetched += 1
             if current % 20 == 0:
@@ -199,7 +199,6 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
         await msg.reply(f"<b>Forward Canceled!\n\nError - {e}</b>")
     else:
         await msg.edit(f'<b>Forward Completed!\n\nTotal Messages: <code>{lst_msg_id}</code>\nFetched :- {fetched}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nFetched Messages: <code>{fetched}</code>\nTotal Forwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>')
-        FORWARDING[user_id] = False
 
 def get_size(size):
     units = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"]
