@@ -160,47 +160,47 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
                     left = int(last_msg_id)-int(total)                   
                     current += 1
                     fetched += 1
-                if current % 20 == 0:
-                    btn = [[
-                        InlineKeyboardButton('🚫 Cancel', callback_data=f'forward#cancel#{chat}#{lst_msg_id}')
-                    ]]
-                    await msg.edit_text(text=f"<b>Forward Processing...\n\nTotal Messages: <code>{lst_msg_id}</code>\nFetched :- {fetched}\nMessages Left :- {left}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nForwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>", reply_markup=InlineKeyboardMarkup(btn))
-                if message.empty:
-                    deleted += 1
-                    continue
-                elif not message.media:
-                    unsupported += 1
-                    continue
-                elif message.media not in [enums.MessageMediaType.DOCUMENT, enums.MessageMediaType.VIDEO]:  # Non documents and videos files skipping
-                    unsupported += 1
-                    continue
-                media = getattr(message, message.media.value, None)
-                if not media:
-                    unsupported += 1
-                    continue
-                elif media.mime_type not in ['video/mp4', 'video/x-matroska']:  # Non mp4 and mkv files types skipping
-                    unsupported += 1
-                    continue
-                try:
-                    await bot.send_cached_media(
-                        chat_id=CHANNEL.get(user_id) if CHANNEL.get(user_id) else TARGET_DB,
-                        file_id=media.file_id,
-                        caption=CAPTION.get(user_id).format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption) if CAPTION.get(user_id) else FILE_CAPTION.format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption)
-                    )
-                except FloodWait as e:
-                    await asyncio.sleep(e.value)  # Wait "value" seconds before continuing
-                    await bot.send_cached_media(
-                        chat_id=CHANNEL.get(user_id) if CHANNEL.get(user_id) else TARGET_DB,
-                        file_id=media.file_id,
-                        caption=CAPTION.get(user_id).format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption) if CAPTION.get(user_id) else FILE_CAPTION.format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption)
-                    )
-                forwarded += 1
-                await asyncio.sleep(1)
-        except Exception as e:
-            logger.exception(e)
-            await msg.reply(f"<b>Forward Canceled!\n\nError - {e}</b>")
-        else:
-            await msg.edit(f'<b>Forward Completed!\n\nTotal Messages: <code>{lst_msg_id}</code>\nFetched :- {fetched}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nFetched Messages: <code>{fetched}</code>\nTotal Forwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>')
+                    if current % 20 == 0:
+                        btn = [[
+                            InlineKeyboardButton('🚫 Cancel', callback_data=f'forward#cancel#{chat}#{lst_msg_id}')
+                        ]]
+                        await msg.edit_text(text=f"<b>Forward Processing...\n\nTotal Messages: <code>{lst_msg_id}</code>\nFetched :- {fetched}\nMessages Left :- {left}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nForwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>", reply_markup=InlineKeyboardMarkup(btn))
+                    if message.empty:
+                        deleted += 1
+                        continue
+                    elif not message.media:
+                        unsupported += 1
+                        continue
+                    elif message.media not in [enums.MessageMediaType.DOCUMENT, enums.MessageMediaType.VIDEO]:  # Non documents and videos files skipping
+                        unsupported += 1
+                        continue
+                    media = getattr(message, message.media.value, None)
+                    if not media:
+                        unsupported += 1
+                        continue
+                    elif media.mime_type not in ['video/mp4', 'video/x-matroska']:  # Non mp4 and mkv files types skipping
+                        unsupported += 1
+                        continue
+                    try:
+                        await bot.send_cached_media(
+                            chat_id=CHANNEL.get(user_id) if CHANNEL.get(user_id) else TARGET_DB,
+                            file_id=media.file_id,
+                            caption=CAPTION.get(user_id).format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption) if CAPTION.get(user_id) else FILE_CAPTION.format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption)
+                        )
+                    except FloodWait as e:
+                        await asyncio.sleep(e.value)  # Wait "value" seconds before continuing
+                        await bot.send_cached_media(
+                            chat_id=CHANNEL.get(user_id) if CHANNEL.get(user_id) else TARGET_DB,
+                            file_id=media.file_id,
+                            caption=CAPTION.get(user_id).format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption) if CAPTION.get(user_id) else FILE_CAPTION.format(file_name=media.file_name, file_size=get_size(media.file_size), caption=message.caption)
+                        )
+                    forwarded += 1
+                    await asyncio.sleep(1)
+            except Exception as e:
+                logger.exception(e)
+                await msg.reply(f"<b>Forward Canceled!\n\nError - {e}</b>")
+            else:
+                await msg.edit(f'<b>Forward Completed!\n\nTotal Messages: <code>{lst_msg_id}</code>\nFetched :- {fetched}\nCompleted Messages: <code>{current}</code> / {lst_msg_id}\nFetched Messages: <code>{fetched}</code>\nTotal Forwarded Files: <code>{forwarded}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nUnsupported Files Skipped: <code>{unsupported}</code></b>')
 
 def get_size(size):
     units = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"]
