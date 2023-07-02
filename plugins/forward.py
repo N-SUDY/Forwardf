@@ -151,12 +151,12 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
     CANCEL[user_id] = False
     async with lock:
     # lst_msg_id is same to total messages
-
         try:
            async for message in bot.iter_messages(chat, lst_msg_id, CURRENT.get(user_id) if CURRENT.get(user_id) else 0):
                if CANCEL.get(user_id):
                     await msg.edit(f"<b>Successfully Forward Canceled!\nFetched :- {fetched}</b>")
                     break
+                   
                 left = int(last_msg_id)-int(total)                   
                 current += 1
                 fetched += 1
