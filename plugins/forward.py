@@ -158,8 +158,8 @@ async def forward_files(lst_msg_id, chat, msg, bot, user_id):
                     await msg.edit(f"<b>Successfully Forward Canceled!\nFetched :- {fetched}</b>")
                     break
                     left = int(last_msg_id)-int(total)                   
-                current += 1
-                fetched += 1
+                    current += 1
+                    fetched += 1
                 if current % 20 == 0:
                     btn = [[
                         InlineKeyboardButton('🚫 Cancel', callback_data=f'forward#cancel#{chat}#{lst_msg_id}')
